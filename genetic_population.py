@@ -1,47 +1,32 @@
 import generation
 import random
-
-
-
-def calculate_fitness(population,target):
-    '''
-    Calcola la fitness per ogni persona(solo se è False, cioè ancora da calcolare) sapendo il target
-    '''
-    for person in population:
-        if person[-1]==False:
-            equal=0
-            diff=0
-            for i in range(len(target)):
-                if person[i]==target[i]:
-                    equal+=1
-                else:
-                    diff+=abs(person[i]-target[i])
-            person[-1]=(len(target)-equal,diff)
-    population.sort(key=lambda x:x[-1])
-    return population
+import math
 
 
 
 def genetic(target,n_pop,mutation_rate,min,max):
-    population=generation.first_gen(n_pop,len(target),min,max)
-    population=calculate_fitness(population,target)
+    print("Target:",target)
+    max_not_exact=int(math.log(len(target),10))
+    max_difference=int(math.log((max-min)*len(target),10))
+    population=generation.first_gen(n_pop,len(target),min,max,target)
     n_gen=1
-    while population[0][:-1]!=target:
-        print(n_gen,"|fitness:",population[0][-1],"|persone:",len(population))
-        population=generation.new_gen(population,mutation_rate,min,max)
-        population=calculate_fitness(population,target)
+    while population[0].attr!=target:
+        print('{0: >7}'.format(n_gen),"|fitness:",'{0: <{width}}'.format(population[0].fitness[0],width=max_not_exact),'{0: >{width}}'.format(population[0].fitness[1],width=max_difference),"|attributi:",len(target),"|persone:",len(population))
+        population=generation.new_gen(population,mutation_rate,min,max,target)
         n_gen+=1
-    print(n_gen,"|fitness:",population[0][-1],"|persone:",len(population))
-    print(population[0][:-1])
-    return n_gen
-
+    print('{0: >7}'.format(n_gen),"|fitness:",'{0: <{width}}'.format(population[0].fitness[0],width=max_not_exact),'{0: >{width}}'.format(population[0].fitness[1],width=max_difference),"|attributi:",len(target),"|persone:",len(population))
+    print("Generazioni necessarie:", n_gen)
 
 
 if __name__=="__main__":
-    target=[random.randint(0,100) for i in range(50)]
-    print(target)
-    n_gen=genetic(target,500,10,0,100)
-    print("Generazioni necessarie:", n_gen)
+    n_population=500
+    mutation_rate=10
+    min=0
+    max=100
+    n_attribute=100
+    target=[random.randint(min,max) for i in range(n_attribute)]
+    genetic(target,n_population,mutation_rate,min,max)
+    
 
 
 

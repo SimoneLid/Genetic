@@ -1,6 +1,19 @@
 import random
+import Person
 
-def new_gen(population,mutation_rate,min,max):
+
+
+def first_gen(n_pop,n_attr,min,max,target):
+    '''
+    Crea una popolazione iniziale di numero start_pop con n_attr attributi ognuno
+    con valori tra min e max e una fitness inizializzata a False
+    '''
+    population=[Person.Person([random.randint(min,max) for j in range(n_attr)],target) for i in range(n_pop)]
+    population.sort(key= lambda x:x.fitness)
+    return population
+
+
+def new_gen(population,mutation_rate,min,max,target):
     '''
     Crea una nuova generazione eliminando la metà peggiore e ripopolandola creando ogni figlio
     con due genitori scelti casualmente.
@@ -12,25 +25,16 @@ def new_gen(population,mutation_rate,min,max):
     for i in range(size-len(population)):
         par1=random.randint(0,round(size/2)-1)
         par2=random.randint(0,round(size/2)-1)
-        son=[]
-        for j in range(0,len(population[0])-1):
+        son_attr=[]
+        for j in range(0,len(population[0].attr)):
             rand_attr=random.randint(1,100)
             if rand_attr<=((100-mutation_rate)/2):
-                son.append(population[par1][j])
+                son_attr.append(population[par1].attr[j])
             elif rand_attr<=(100-mutation_rate):
-                son.append(population[par2][j])
+                son_attr.append(population[par2].attr[j])
             else:
-                son.append(random.randint(min,max))
-        son.append(False)
+                son_attr.append(random.randint(min,max))
+        son=Person.Person(son_attr,target)
         population.append(son)
-    return population
-
-
-
-def first_gen(n_pop,n_attr,min,max):
-    '''
-    Crea una popolazione iniziale di numero start_pop con n_attr attributi ognuno
-    con valori tra min e max e una fitness inizializzata a False
-    '''
-    population=[([random.randint(min,max) for j in range(n_attr)]+[False]) for i in range(n_pop)]
+    population.sort(key= lambda x:x.fitness)
     return population
